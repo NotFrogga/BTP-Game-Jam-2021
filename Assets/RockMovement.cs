@@ -110,5 +110,9 @@ public class RockMovement : MonoBehaviour
         {
             rockMoving = true;
         }
+        else
+        {
+            rockMoving = false;
+        }
     }
 }
