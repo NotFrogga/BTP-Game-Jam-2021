@@ -156,7 +156,7 @@ MonoBehaviour:
   moveSpeed: 5
   whatIsCollision:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
   whatIsSlippery:
     serializedVersion: 2
     m_Bits: 128
