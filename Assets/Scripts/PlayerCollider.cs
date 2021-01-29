@@ -8,8 +8,12 @@ public class PlayerCollider : MonoBehaviour
 
     public static bool hasKey;
 
+    public AudioSource audio;
+    [SerializeField] AudioClip getKeyClip;
+    FinishLevel finishGO;
     private void Start()
     {
+        finishGO = GameObject.FindObjectOfType<FinishLevel>();
         hasKey = false;
     }
 
@@ -19,7 +23,12 @@ public class PlayerCollider : MonoBehaviour
         {
             hasKey = true;
             Destroy(collision.gameObject);
-            Debug.Log("Key Obtained !");
+
+            // Trigger get key sound
+            audio.clip = getKeyClip;
+            audio.Play();
+
+            finishGO.ChangeSpriteToFullStar();
         }
     }
 }

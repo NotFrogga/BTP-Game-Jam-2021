@@ -12,6 +12,8 @@ public class RockMovement : MonoBehaviour
     public bool notMovable;
     [SerializeField] public static bool rockMoving;
 
+    AudioSource audio;
+    [SerializeField] AudioClip slideRock;
     Collider2D nextTileIsCollision;
     Collider2D isOnSlipperyGround;
 
@@ -26,6 +28,8 @@ public class RockMovement : MonoBehaviour
 
         // Check if rock can move
         notMovable = false;
+
+        audio = gameObject.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -61,6 +65,13 @@ public class RockMovement : MonoBehaviour
                 // check colliders
                 if (!Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), 0.005f, whatIsCollision))
                 {
+                    // Trigger rock slide sound
+                    if (!audio.isPlaying)
+                    {
+                        audio.clip = slideRock;
+                        audio.Play();
+                    }
+
                     movePos.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
                 }
 
@@ -80,6 +91,14 @@ public class RockMovement : MonoBehaviour
                 // check colliders
                 if (!Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), 0.005f, whatIsCollision))
                 {
+                    // Trigger rock slide sound
+                    if (!audio.isPlaying)
+                    {
+                        audio.clip = slideRock;
+                        audio.Play();
+                    }
+
+
                     movePos.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
 
                     nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), 0.005f, whatIsCollision);

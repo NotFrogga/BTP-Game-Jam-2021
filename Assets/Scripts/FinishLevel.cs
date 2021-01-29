@@ -4,8 +4,17 @@ using UnityEngine;
 
 public class FinishLevel : MonoBehaviour
 {
+    AudioSource audio;
+    SpriteRenderer sr;
+    [SerializeField] AudioClip winClip;
+    [SerializeField] Sprite fullStar;
 
-   
+    private void Start()
+    {
+        sr = gameObject.GetComponent<SpriteRenderer>();
+        audio = gameObject.GetComponent<AudioSource>();
+    }
+
     /// <summary>
     /// Checks if level is finished. Level is finished when player has key and player touches the star
     /// </summary>
@@ -14,7 +23,24 @@ public class FinishLevel : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("player") && PlayerCollider.hasKey)
         {
-            Debug.Log("Finished Level !");
+            PlayerMovement player = collision.gameObject.GetComponent<PlayerMovement>();
+            player.GetComponent<Animator>().SetBool("win", true);
+            
+
+            // Trigger finished level sound
+            if (!audio.isPlaying)
+            {
+                audio.clip = winClip;
+                audio.Play();
+            }           
         }
+    }
+
+    /// <summary>
+    /// Change sprite to full star after getting the key
+    /// </summary>
+    public void ChangeSpriteToFullStar()
+    {
+        sr.sprite = fullStar;
     }
 }

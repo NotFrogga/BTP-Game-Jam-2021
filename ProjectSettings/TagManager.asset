@@ -6,6 +6,8 @@ TagManager:
   tags:
   - key
   - player
+  - GameManagement
+  - MusicManager
   layers:
   - Default
   - TransparentFX
@@ -16,7 +18,7 @@ TagManager:
   - Collision
   - Slip
   - Rock
-  - 
+  - UI
   - 
   - 
   - 
@@ -42,4 +44,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 545052177
+    locked: 0
+  - name: player
+    uniqueID: 1156499605
     locked: 0
