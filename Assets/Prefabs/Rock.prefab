@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 7749565184185062746}
   m_Layer: 8
   m_Name: Rock
-  m_TagString: Untagged
+  m_TagString: Rock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -164,6 +164,7 @@ MonoBehaviour:
   movePos: {fileID: 5071293525850074811}
   notMovable: 0
   slideRock: {fileID: 8300000, guid: 39258b9e83e7dab42a1d9bbbd6456cf2, type: 3}
+  minimumRange: 0
 --- !u!82 &7749565184185062746
 AudioSource:
   m_ObjectHideFlags: 0

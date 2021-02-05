@@ -10,10 +10,11 @@ public class RockMovement : MonoBehaviour
     public LayerMask whatIsSlippery;
     [SerializeField] Transform movePos;
     public bool notMovable;
-    [SerializeField] public static bool rockMoving;
+    [SerializeField] public bool rockMoving;
 
     AudioSource audio;
     [SerializeField] AudioClip slideRock;
+    [SerializeField] float minimumRange = 0;
     Collider2D nextTileIsCollision;
     Collider2D isOnSlipperyGround;
 
@@ -63,7 +64,7 @@ public class RockMovement : MonoBehaviour
             if (axis == "Horizontal")
             {
                 // check colliders
-                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), 0.005f, whatIsCollision))
+                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision))
                 {
                     // Trigger rock slide sound
                     if (!audio.isPlaying)
@@ -75,13 +76,13 @@ public class RockMovement : MonoBehaviour
                     movePos.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
                 }
 
-                nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), 0.005f, whatIsCollision);
+                nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision);
                 isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0f, whatIsSlippery);
                 // Rock slips in slippery layer
                 while (isOnSlipperyGround && !nextTileIsCollision)
                 {
                     movePos.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
-                    nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), 0.005f, whatIsCollision);
+                    nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision);
                     isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0f, whatIsSlippery);
                 }
             }
@@ -89,7 +90,7 @@ public class RockMovement : MonoBehaviour
             else if (axis == "Vertical")
             {
                 // check colliders
-                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), 0.005f, whatIsCollision))
+                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision))
                 {
                     // Trigger rock slide sound
                     if (!audio.isPlaying)
@@ -101,14 +102,14 @@ public class RockMovement : MonoBehaviour
 
                     movePos.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
 
-                    nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), 0.005f, whatIsCollision);
+                    nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision);
                     isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0.005f, whatIsSlippery);
 
                     // Rock slips in slippery layer
                     while (isOnSlipperyGround && !nextTileIsCollision)
                     {
                         movePos.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
-                        nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), 0.005f, whatIsCollision);
+                        nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision);
                         isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0.005f, whatIsSlippery);
                     }
                 }
@@ -125,7 +126,7 @@ public class RockMovement : MonoBehaviour
         gameObject.transform.position = Vector3.MoveTowards(transform.position, movePos.position, moveSpeed * Time.deltaTime);
 
         //Check if rock has stopped moving
-        if (Math.Abs(Vector3.Distance(movePos.position, transform.position)) > 0.5f)
+        if (Math.Abs(Vector3.Distance(movePos.position, transform.position)) > minimumRange)
         {
             rockMoving = true;
         }

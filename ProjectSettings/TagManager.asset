@@ -8,6 +8,7 @@ TagManager:
   - player
   - GameManagement
   - MusicManager
+  - Rock
   layers:
   - Default
   - TransparentFX

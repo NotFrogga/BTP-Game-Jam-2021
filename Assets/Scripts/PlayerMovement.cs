@@ -9,7 +9,11 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask whatIsCollision;
     public LayerMask whatIsSlippery;
     public LayerMask whatIsRock;
+
+    GameManagement gameManagement;
     [SerializeField] Transform movePos;
+
+    [SerializeField] float minimumRange = 0;
 
     Animator animator;
     Collider2D nextTileIsCollision;
@@ -27,6 +31,8 @@ public class PlayerMovement : MonoBehaviour
 
         animator = gameObject.GetComponent<Animator>();
         audio = gameObject.GetComponent<AudioSource>();
+
+        gameManagement = GameObject.FindGameObjectWithTag("GameManagement").GetComponent<GameManagement>();
     }
 
     // Update is called once per frame
@@ -34,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     {
 
         // Cannot move player if one rock is moving
-        if (!RockMovement.rockMoving)
+        if (gameManagement != null && !gameManagement.CheckIfRocksAreMoving())
         {
             MoveCharacter();
         }
@@ -56,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 MoveRock("Horizontal");
                 // check colliders
-                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), 0.005f, whatIsCollision))
+                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision))
                 {
                     // Setting animation variables
                     animator.SetInteger("horizontal", (int)Input.GetAxisRaw("Horizontal"));
@@ -83,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
                     movePos.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);                    
                 }
 
-                nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), 0.005f, whatIsCollision);
+                nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision);
                 isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0f, whatIsSlippery);
                 // Player slips in slippery layer
                 while (isOnSlipperyGround && !nextTileIsCollision)
@@ -92,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
                     if (!animator.GetBool("win"))
                     {
                         movePos.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
-                        nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), 0.005f, whatIsCollision);
+                        nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision);
                         isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0f, whatIsSlippery);
                     }
 
@@ -106,7 +112,7 @@ public class PlayerMovement : MonoBehaviour
                 MoveRock("Vertical");
 
                 // check colliders
-                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), 0.005f, whatIsCollision))
+                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision))
                 {
                     // Setting animation variables
                     animator.SetInteger("vertical", (int)Input.GetAxisRaw("Vertical"));
@@ -121,7 +127,7 @@ public class PlayerMovement : MonoBehaviour
 
                     movePos.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
 
-                    nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), 0.005f, whatIsCollision);
+                    nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision);
                     isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0.005f, whatIsSlippery);
 
                     // Player slips in slippery layer
@@ -130,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
 
 
                         movePos.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
-                        nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), 0.005f, whatIsCollision);
+                        nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision);
                         isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0.005f, whatIsSlippery);
                     }
 
@@ -148,7 +154,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (axis == "Horizontal")
         {
-            Collider2D collider = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), 0.005f, whatIsRock);
+            Collider2D collider = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsRock);
             if (collider != null)
             {
                 RockMovement rock = collider.gameObject.GetComponent<RockMovement>();
@@ -161,7 +167,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (axis == "Vertical")
         {
-            Collider2D collider = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), 0.005f, whatIsRock);
+            Collider2D collider = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsRock);
 
             if (collider != null)
             {

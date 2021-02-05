@@ -1,3 +1,6 @@
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -57,5 +60,28 @@ public class GameManagement : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             }
         } 
+    }
+
+
+    /// <summary>
+    /// Checks if any rock is moving
+    /// </summary>
+    /// <returns>True if at least one rock is moving, false if there are no rocks or no rock is moving</returns>
+    public bool CheckIfRocksAreMoving()
+    {
+        List<GameObject> rocksGo = GameObject.FindGameObjectsWithTag("Rock").ToList() ;
+
+        if (rocksGo.Any())
+        {
+            foreach (GameObject rockGo in rocksGo)
+            {
+                if (rockGo.GetComponent<RockMovement>().rockMoving)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
