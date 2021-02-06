@@ -42,6 +42,8 @@ public class PlayerMovement : MonoBehaviour
         // Cannot move player if one rock is moving
         if (gameManagement != null && !gameManagement.CheckIfRocksAreMoving())
         {
+            // if insided if statement, no rocks are moving so no pushing
+            animator.SetBool("push", false);
             MoveCharacter();
         }
     }
@@ -55,18 +57,18 @@ public class PlayerMovement : MonoBehaviour
         
         // check if player finished moving to new position
         if (Math.Abs(Vector3.Distance(movePos.position, transform.position)) < 0.05f)
-        {
-            
-            
+        {    
             if (Math.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
             {
                 MoveRock("Horizontal");
+
+                // Setting animation variables
+                animator.SetInteger("horizontal", (int)Input.GetAxisRaw("Horizontal"));
+                animator.SetInteger("vertical", 0);
+
                 // check colliders
                 if (!Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision))
                 {
-                    // Setting animation variables
-                    animator.SetInteger("horizontal", (int)Input.GetAxisRaw("Horizontal"));
-                    animator.SetInteger("vertical", 0);
 
 
                     // Trigger slide sound effect
@@ -111,12 +113,13 @@ public class PlayerMovement : MonoBehaviour
             {
                 MoveRock("Vertical");
 
+                // Setting animation variables
+                animator.SetInteger("vertical", (int)Input.GetAxisRaw("Vertical"));
+                animator.SetInteger("horizontal", 0);
+
                 // check colliders
                 if (!Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision))
                 {
-                    // Setting animation variables
-                    animator.SetInteger("vertical", (int)Input.GetAxisRaw("Vertical"));
-                    animator.SetInteger("horizontal", 0);
 
                     // Trigger slide sound effect
                     if (!audio.isPlaying)

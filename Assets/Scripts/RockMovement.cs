@@ -11,6 +11,7 @@ public class RockMovement : MonoBehaviour
     [SerializeField] Transform movePos;
     public bool notMovable;
     [SerializeField] public bool rockMoving;
+    PlayerMovement player;
 
     AudioSource audio;
     [SerializeField] AudioClip slideRock;
@@ -18,6 +19,8 @@ public class RockMovement : MonoBehaviour
     Collider2D nextTileIsCollision;
     Collider2D isOnSlipperyGround;
 
+
+    Animator animator;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +34,10 @@ public class RockMovement : MonoBehaviour
         notMovable = false;
 
         audio = gameObject.GetComponent<AudioSource>();
+
+        player = GameObject.FindGameObjectWithTag("player").GetComponent<PlayerMovement>();
+
+        animator = gameObject.GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -73,7 +80,11 @@ public class RockMovement : MonoBehaviour
                         audio.Play();
                     }
 
+                    // Set bool to check if animation should be horizontal or vertical
+                    animator.SetBool("isVertical", false);
+
                     movePos.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
+                    player.GetComponent<Animator>().SetBool("push", true);
                 }
 
                 nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision);
@@ -98,9 +109,12 @@ public class RockMovement : MonoBehaviour
                         audio.clip = slideRock;
                         audio.Play();
                     }
-
+                    
+                    // Set bool to check if animation should be horizontal or vertical
+                    animator.SetBool("isVertical", true);
 
                     movePos.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
+                    player.GetComponent<Animator>().SetBool("push", true);
 
                     nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision);
                     isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0.005f, whatIsSlippery);
@@ -129,10 +143,17 @@ public class RockMovement : MonoBehaviour
         if (Math.Abs(Vector3.Distance(movePos.position, transform.position)) > minimumRange)
         {
             rockMoving = true;
+
+            // Set Rock Movement animation
+            animator.SetBool("isPushed", true);
+
         }
         else
         {
             rockMoving = false;
+
+            // Set back Rock Movement animation
+            animator.SetBool("isPushed", false);
         }
     }
 }

@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 5071293526714501598}
   - component: {fileID: 5071293526714501585}
   - component: {fileID: 7749565184185062746}
+  - component: {fileID: 5647220621202890731}
   m_Layer: 8
   m_Name: Rock
   m_TagString: Rock
@@ -163,6 +164,7 @@ MonoBehaviour:
     m_Bits: 128
   movePos: {fileID: 5071293525850074811}
   notMovable: 0
+  rockMoving: 0
   slideRock: {fileID: 8300000, guid: 39258b9e83e7dab42a1d9bbbd6456cf2, type: 3}
   minimumRange: 0
 --- !u!82 &7749565184185062746
@@ -261,3 +263,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!95 &5647220621202890731
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5071293526714501597}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0a95582e5d889f24090c6b2ec9b5b937, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
