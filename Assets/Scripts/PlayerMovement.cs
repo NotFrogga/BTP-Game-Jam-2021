@@ -66,6 +66,16 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetInteger("horizontal", (int)Input.GetAxisRaw("Horizontal"));
                 animator.SetInteger("vertical", 0);
 
+                // flip sprite if player turns left
+                if (Input.GetAxisRaw("Horizontal") == -1)
+                {
+                    transform.localRotation = Quaternion.Euler(0, 180, 0);
+                }
+                else
+                {
+                    transform.localRotation = Quaternion.Euler(0, 0, 0);
+                }
+
                 // check colliders
                 if (!Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision))
                 {
@@ -78,15 +88,6 @@ public class PlayerMovement : MonoBehaviour
                         audio.Play();
                     }
 
-                    // flip sprite if player turns left
-                    if (Input.GetAxisRaw("Horizontal") == -1)
-                    {
-                        transform.localRotation = Quaternion.Euler(0, 180, 0);
-                    }
-                    else
-                    {
-                        transform.localRotation = Quaternion.Euler(0, 0, 0);
-                    }
 
                     movePos.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);                    
                 }
