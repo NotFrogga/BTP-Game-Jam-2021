@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using BTPGameJam;
 
 public class FinishLevel : MonoBehaviour
 {
-    string PLAYER_GUIDE_TAG = "PlayerMov";
     AudioSource finishLevelAudioSource;
     SpriteRenderer sr;
     [SerializeField] AudioClip winClip;
@@ -22,7 +22,7 @@ public class FinishLevel : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        bool playerFinishedLevel = collision.gameObject.CompareTag("player") && PlayerCollider.hasKey;
+        bool playerFinishedLevel = collision.gameObject.CompareTag(Constants.Tags.PLAYER) && PlayerCollider.hasKey;
 
         if (playerFinishedLevel)
         {
@@ -48,7 +48,7 @@ public class FinishLevel : MonoBehaviour
     private static void SetPlayerWinAnimation(Collider2D collision)
     {
         PlayerMovement player = collision.gameObject.GetComponent<PlayerMovement>();
-        player.GetComponent<Animator>().SetBool("win", true);
+        player.GetComponent<Animator>().SetBool(Constants.Animation.WIN, true);
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class FinishLevel : MonoBehaviour
     /// </summary>
     private void StopPlayerGuideToIgloo()
     {
-        GameObject playerMov = GameObject.FindGameObjectWithTag(PLAYER_GUIDE_TAG);
+        GameObject playerMov = GameObject.FindGameObjectWithTag(Constants.Tags.PLAYER_GUIDE);
         playerMov.transform.position = transform.position;
     }
 

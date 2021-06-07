@@ -1,4 +1,5 @@
 using UnityEngine;
+using BTPGameJam;
 
 public class PlayerCollider : MonoBehaviour
 {
@@ -18,7 +19,7 @@ public class PlayerCollider : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("key"))
+        if (collision.gameObject.CompareTag(Constants.Tags.KEY))
         {
             PlayerAcquiredKey(collision);
         }

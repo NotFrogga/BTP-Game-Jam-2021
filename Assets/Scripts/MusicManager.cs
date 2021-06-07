@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using BTPGameJam;
 
 public class MusicManager : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class MusicManager : MonoBehaviour
     /// </summary>
     private void SetUniqueMusicManager()
     {
-        GameObject[] musicManagers = GameObject.FindGameObjectsWithTag("MusicManager");
+        GameObject[] musicManagers = GameObject.FindGameObjectsWithTag(Constants.Tags.MUSIC_MANAGER);
         if (musicManagers.Length > 1)
         {
             Destroy(gameObject);

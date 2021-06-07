@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
+using BTPGameJam;
 
 public class RockMovement : MonoBehaviour
 {
-    
     PlayerMovement player;
     Animator animator;
     Collider2D isOnSlipperyGround;
@@ -35,7 +35,7 @@ public class RockMovement : MonoBehaviour
         isOnSlipperyTile = false;
 
         rockAudioSource = gameObject.GetComponent<AudioSource>();
-        player = GameObject.FindGameObjectWithTag("player").GetComponent<PlayerMovement>();
+        player = GameObject.FindGameObjectWithTag(Constants.Tags.PLAYER).GetComponent<PlayerMovement>();
         animator = gameObject.GetComponent<Animator>();
     }
 
@@ -61,14 +61,14 @@ public class RockMovement : MonoBehaviour
             rockMoving = true;
 
             // Set Rock Movement animation
-            animator.SetBool("isPushed", true);
+            animator.SetBool(Constants.Animation.IS_PUSHED, true);
         }
         else
         {
             rockMoving = false;
 
             // Set back Rock Movement animation
-            animator.SetBool("isPushed", false);
+            animator.SetBool(Constants.Animation.IS_PUSHED, false);
         }
     }
     #endregion
@@ -90,7 +90,7 @@ public class RockMovement : MonoBehaviour
                 TriggerRockAudioClip();
                 SetAnimationAxis(direction);
                 movementGuideTf.position = nextTilePos;
-                player.GetComponent<Animator>().SetBool("push", true);
+                player.GetComponent<Animator>().SetBool(Constants.Animation.PUSH, true);
                 MoveRockGuide(direction, true);
             }
         }
@@ -120,11 +120,11 @@ public class RockMovement : MonoBehaviour
         if (direction.y == 0)
         {
            
-            animator.SetBool("isVertical", false);
+            animator.SetBool(Constants.Animation.IS_VERTICAL, false);
         }
         else
         {
-            animator.SetBool("isVertical", true);
+            animator.SetBool(Constants.Animation.IS_VERTICAL, true);
         }
     }
 

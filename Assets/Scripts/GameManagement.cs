@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using BTPGameJam;
 
 public class GameManagement : MonoBehaviour
 {
@@ -75,7 +76,7 @@ public class GameManagement : MonoBehaviour
     /// <returns>True if at least one rock is moving, false if there are no rocks or no rock is moving</returns>
     public bool CheckIfRocksAreMoving()
     {
-        List<GameObject> rocksGo = GameObject.FindGameObjectsWithTag("Rock").ToList() ;
+        List<GameObject> rocksGo = GameObject.FindGameObjectsWithTag(Constants.Tags.ROCK).ToList() ;
 
         if (rocksGo.Any())
         {

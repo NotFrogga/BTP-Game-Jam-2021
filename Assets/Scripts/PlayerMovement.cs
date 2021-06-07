@@ -2,14 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using BTPGameJam;
 
 public class PlayerMovement : MonoBehaviour
 {
     GameManagement gameManagement;
     Animator animator;
-
-    const string HORIZONTAL = "Horizontal";
-    const string VERTICAL = "Vertical";
 
     [Header("Audio")]
     AudioSource playerAudioSource;
@@ -33,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
     {
         animator = gameObject.GetComponent<Animator>();
         playerAudioSource = gameObject.GetComponent<AudioSource>();
-        gameManagement = GameObject.FindGameObjectWithTag("GameManagement").GetComponent<GameManagement>();
+        gameManagement = GameObject.FindGameObjectWithTag(Constants.Tags.GAME_MANAGEMENT).GetComponent<GameManagement>();
 
         // Transform is not parented to player anymore
         movementGuideTf.parent = null;
@@ -46,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
         if (gameManagement != null && !gameManagement.CheckIfRocksAreMoving())
         {
             // if insided if statement, no rocks are moving so no pushing
-            animator.SetBool("push", false);
+            animator.SetBool(Constants.Animation.PUSH, false);
             PlayerFollowGuide();
             GuideMovement();
         }
@@ -81,16 +79,16 @@ public class PlayerMovement : MonoBehaviour
         // check if player finished moving to new position
         if (Vector3.Distance(movementGuidePos, playerPos) < minDistanceGuideToPlayer)
         {
-            if (Math.Abs(Input.GetAxisRaw(HORIZONTAL)) == 1f)
+            if (Math.Abs(Input.GetAxisRaw(Constants.Movement.HORIZONTAL)) == 1f)
             {
-                direction = new Vector3(Input.GetAxisRaw(HORIZONTAL), 0f, 0f);
-                DIRECTION = HORIZONTAL;
+                direction = new Vector3(Input.GetAxisRaw(Constants.Movement.HORIZONTAL), 0f, 0f);
+                DIRECTION = Constants.Movement.HORIZONTAL;
             }
             // prevent diagonal movement
             else
             {
-                direction = new Vector3(0f, Input.GetAxisRaw(VERTICAL), 0f);
-                DIRECTION = VERTICAL;
+                direction = new Vector3(0f, Input.GetAxisRaw(Constants.Movement.VERTICAL), 0f);
+                DIRECTION = Constants.Movement.VERTICAL;
             }
 
             if (direction != Vector3.zero)
@@ -164,7 +162,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void TriggerChangerScene()
     {
-        GameManagement gm = GameObject.FindGameObjectWithTag("GameManagement").GetComponent<GameManagement>();
+        GameManagement gm = GameObject.FindGameObjectWithTag(Constants.Tags.GAME_MANAGEMENT).GetComponent<GameManagement>();
         gm.levelFinished = true;
     }
 
@@ -187,14 +185,15 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="axis">Player input axis</param>
     private void SetPlayerAnimation(string axis)
     {
-        if (axis == HORIZONTAL)
+        if (axis == Constants.Movement.HORIZONTAL)
         {
+            
             // Setting animation variables
-            animator.SetInteger("horizontal", (int)Input.GetAxisRaw(HORIZONTAL));
-            animator.SetInteger("vertical", 0);
+            animator.SetInteger(Constants.Animation.HORIZONTAL, (int)Input.GetAxisRaw(Constants.Movement.HORIZONTAL));
+            animator.SetInteger(Constants.Animation.VERTICAL, 0);
 
             // flip sprite if player turns left
-            if (Input.GetAxisRaw(HORIZONTAL) == -1)
+            if (Input.GetAxisRaw(Constants.Movement.HORIZONTAL) == -1)
             {
                 transform.localRotation = Quaternion.Euler(0, 180, 0);
             }
@@ -203,11 +202,11 @@ public class PlayerMovement : MonoBehaviour
                 transform.localRotation = Quaternion.Euler(0, 0, 0);
             }
         }
-        else if (axis == VERTICAL)
+        else if (axis == Constants.Movement.VERTICAL)
         {
             // Setting animation variables
-            animator.SetInteger("vertical", (int)Input.GetAxisRaw(VERTICAL));
-            animator.SetInteger("horizontal", 0);
+            animator.SetInteger(Constants.Animation.VERTICAL, (int)Input.GetAxisRaw(Constants.Movement.VERTICAL));
+            animator.SetInteger(Constants.Animation.HORIZONTAL, 0);
         }
     }
     #endregion
