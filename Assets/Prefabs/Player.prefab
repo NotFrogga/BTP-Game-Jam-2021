@@ -101,7 +101,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 938d5ee6966c82f41ae4e54a39715ebe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slideClip: {fileID: 8300000, guid: 5f07a60d5922a6147aad52ed70ad828f, type: 3}
   moveSpeed: 5
+  movementGuideTf: {fileID: 7026982351662723085}
+  minimumRange: 0
   whatIsCollision:
     serializedVersion: 2
     m_Bits: 320
@@ -111,8 +114,6 @@ MonoBehaviour:
   whatIsRock:
     serializedVersion: 2
     m_Bits: 256
-  movePos: {fileID: 7026982351662723085}
-  slideClip: {fileID: 8300000, guid: 5f07a60d5922a6147aad52ed70ad828f, type: 3}
 --- !u!50 &7026982351087844388
 Rigidbody2D:
   serializedVersion: 4
@@ -162,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a1e0ead95fc19a40a39299fa04c133c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audio: {fileID: 9016465525774250687}
+  playerColliderAudioSource: {fileID: 4688818126350585097}
   getKeyClip: {fileID: 8300000, guid: e109c8dd0d7180e48a610d54a1a36f5c, type: 3}
 --- !u!95 &9089090817283410099
 Animator:
@@ -291,7 +292,7 @@ GameObject:
   - component: {fileID: 9016465525774250687}
   m_Layer: 0
   m_Name: PlayerMov
-  m_TagString: Untagged
+  m_TagString: PlayerMov
   m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

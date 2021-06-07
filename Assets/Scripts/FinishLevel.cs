@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class FinishLevel : MonoBehaviour
 {
-    AudioSource audio;
+    string PLAYER_GUIDE_TAG = "PlayerMov";
+    AudioSource finishLevelAudioSource;
     SpriteRenderer sr;
     [SerializeField] AudioClip winClip;
-    [SerializeField] Sprite fullStar;
+    [SerializeField] Sprite fullSprite;
 
     private void Start()
     {
         sr = gameObject.GetComponent<SpriteRenderer>();
-        audio = gameObject.GetComponent<AudioSource>();
+        finishLevelAudioSource = gameObject.GetComponent<AudioSource>();
     }
 
     /// <summary>
@@ -21,26 +22,63 @@ public class FinishLevel : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("player") && PlayerCollider.hasKey)
-        {
-            PlayerMovement player = collision.gameObject.GetComponent<PlayerMovement>();
-            player.GetComponent<Animator>().SetBool("win", true);
-            
+        bool playerFinishedLevel = collision.gameObject.CompareTag("player") && PlayerCollider.hasKey;
 
-            // Trigger finished level sound
-            if (!audio.isPlaying)
-            {
-                audio.clip = winClip;
-                audio.Play();
-            }           
+        if (playerFinishedLevel)
+        {
+            PlayerFinishLevel(collision);
         }
     }
 
     /// <summary>
-    /// Change sprite to full star after getting the key
+    /// Triggers events to finish level
     /// </summary>
-    public void ChangeSpriteToFullStar()
+    /// <param name="collision">collision gameobject which is player gameobject</param>
+    private void PlayerFinishLevel(Collider2D collision)
     {
-        sr.sprite = fullStar;
+        SetPlayerWinAnimation(collision);
+        StopPlayerGuideToIgloo();
+        TriggerLevelFinishAudioClip();
+    }
+
+    /// <summary>
+    /// Sets player win animation
+    /// </summary>
+    /// <param name="collision">collision gameobject which is player gameobject</param>
+    private static void SetPlayerWinAnimation(Collider2D collision)
+    {
+        PlayerMovement player = collision.gameObject.GetComponent<PlayerMovement>();
+        player.GetComponent<Animator>().SetBool("win", true);
+    }
+
+    /// <summary>
+    /// Stops player guide to igloo
+    /// In case igloo is on slippery tile
+    /// </summary>
+    private void StopPlayerGuideToIgloo()
+    {
+        GameObject playerMov = GameObject.FindGameObjectWithTag(PLAYER_GUIDE_TAG);
+        playerMov.transform.position = transform.position;
+    }
+
+    /// <summary>
+    /// Triggers level finished audio clip
+    /// </summary>
+    private void TriggerLevelFinishAudioClip()
+    {
+        // Trigger finished level sound
+        if (!finishLevelAudioSource.isPlaying)
+        {
+            finishLevelAudioSource.clip = winClip;
+            finishLevelAudioSource.Play();
+        }
+    }
+
+    /// <summary>
+    /// Change end sprite (igloo) to full sprite after getting the key (fish)
+    /// </summary>
+    public void SetEndLevelToFullSprite()
+    {
+        sr.sprite = fullSprite;
     }
 }

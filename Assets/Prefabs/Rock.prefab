@@ -162,8 +162,8 @@ MonoBehaviour:
   whatIsSlippery:
     serializedVersion: 2
     m_Bits: 128
-  movePos: {fileID: 5071293525850074811}
-  notMovable: 0
+  movementGuideTf: {fileID: 5071293525850074811}
+  isOnSlipperyTile: 0
   rockMoving: 0
   slideRock: {fileID: 8300000, guid: 39258b9e83e7dab42a1d9bbbd6456cf2, type: 3}
   minimumRange: 0

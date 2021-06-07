@@ -5,147 +5,136 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    GameManagement gameManagement;
+    Animator animator;
+
+    const string HORIZONTAL = "Horizontal";
+    const string VERTICAL = "Vertical";
+
+    [Header("Audio")]
+    AudioSource playerAudioSource;
+    public AudioClip slideClip;
+
+    [Header("Movement Properties")]
     public float moveSpeed = 1.25f;
+    [SerializeField] Transform movementGuideTf;
+    [SerializeField] float minimumRange = 0;
+    float minDistanceGuideToPlayer = 0.05f;
+    Collider2D nextTileIsCollision;
+    Collider2D isOnSlipperyGround;
+
+    [Header("Movement LayerMask")]
     public LayerMask whatIsCollision;
     public LayerMask whatIsSlippery;
     public LayerMask whatIsRock;
 
-    GameManagement gameManagement;
-    [SerializeField] Transform movePos;
-
-    [SerializeField] float minimumRange = 0;
-
-    Animator animator;
-    Collider2D nextTileIsCollision;
-    Collider2D isOnSlipperyGround;
-
-    AudioSource audio;
-    public AudioClip slideClip;
-    
-
     // Start is called before the first frame update
     void Start()
     {
-        // Transform is not parented to player anymore
-        movePos.parent = null;
-
         animator = gameObject.GetComponent<Animator>();
-        audio = gameObject.GetComponent<AudioSource>();
-
+        playerAudioSource = gameObject.GetComponent<AudioSource>();
         gameManagement = GameObject.FindGameObjectWithTag("GameManagement").GetComponent<GameManagement>();
+
+        // Transform is not parented to player anymore
+        movementGuideTf.parent = null;
     }
 
     // Update is called once per frame
     void Update()
     {
-
         // Cannot move player if one rock is moving
         if (gameManagement != null && !gameManagement.CheckIfRocksAreMoving())
         {
             // if insided if statement, no rocks are moving so no pushing
             animator.SetBool("push", false);
-            MoveCharacter();
+            PlayerFollowGuide();
+            GuideMovement();
         }
     }
-    
+
+    #region Player Movement
+
+    /// <summary>
+    /// Make player follow mouvement guide gameobject
+    /// </summary>
+    private void PlayerFollowGuide()
+    {
+        Vector3 playerPos = transform.position;
+        Vector3 movementGuidePos = movementGuideTf.position;
+
+        // Player follows child guide
+        transform.position = Vector3.MoveTowards(playerPos, movementGuidePos, moveSpeed * Time.deltaTime);
+    }
+    #endregion
+
+    #region Guide Movement
     /// <summary>
     /// Character tile movement
     /// </summary>
-    private void MoveCharacter()
+    private void GuideMovement()
     {
-        gameObject.transform.position = Vector3.MoveTowards(transform.position, movePos.position, moveSpeed * Time.deltaTime);
-        
+        Vector3 playerPos = transform.position;
+        Vector3 movementGuidePos = movementGuideTf.position;
+        Vector3 direction;
+        string DIRECTION;
+
         // check if player finished moving to new position
-        if (Math.Abs(Vector3.Distance(movePos.position, transform.position)) < 0.05f)
-        {    
-            if (Math.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
+        if (Vector3.Distance(movementGuidePos, playerPos) < minDistanceGuideToPlayer)
+        {
+            if (Math.Abs(Input.GetAxisRaw(HORIZONTAL)) == 1f)
             {
-                MoveRock("Horizontal");
-
-                // Setting animation variables
-                animator.SetInteger("horizontal", (int)Input.GetAxisRaw("Horizontal"));
-                animator.SetInteger("vertical", 0);
-
-                // flip sprite if player turns left
-                if (Input.GetAxisRaw("Horizontal") == -1)
-                {
-                    transform.localRotation = Quaternion.Euler(0, 180, 0);
-                }
-                else
-                {
-                    transform.localRotation = Quaternion.Euler(0, 0, 0);
-                }
-
-                // check colliders
-                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision))
-                {
-
-
-                    // Trigger slide sound effect
-                    if (!audio.isPlaying)
-                    {
-                        audio.clip = slideClip;
-                        audio.Play();
-                    }
-
-
-                    movePos.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);                    
-                }
-
-                nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision);
-                isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0f, whatIsSlippery);
-                // Player slips in slippery layer
-                while (isOnSlipperyGround && !nextTileIsCollision)
-                {
-                    // Stop when play reaches end of level
-                    if (!animator.GetBool("win"))
-                    {
-                        movePos.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
-                        nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsCollision);
-                        isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0f, whatIsSlippery);
-                    }
-
-                }
-
-
-            } 
+                direction = new Vector3(Input.GetAxisRaw(HORIZONTAL), 0f, 0f);
+                DIRECTION = HORIZONTAL;
+            }
             // prevent diagonal movement
-            else if (Math.Abs(Input.GetAxisRaw("Vertical")) == 1f)
+            else
             {
-                MoveRock("Vertical");
+                direction = new Vector3(0f, Input.GetAxisRaw(VERTICAL), 0f);
+                DIRECTION = VERTICAL;
+            }
 
-                // Setting animation variables
-                animator.SetInteger("vertical", (int)Input.GetAxisRaw("Vertical"));
-                animator.SetInteger("horizontal", 0);
+            if (direction != Vector3.zero)
+            {
+                MoveRock(direction);
+                SetPlayerAnimation(DIRECTION);
+                MoveGuideToPos(direction, false);
+            }
+        }
+    }
 
-                // check colliders
-                if (!Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision))
-                {
+    /// <summary>
+    /// Move guide to new position
+    /// </summary>
+    /// <param name="direction">direction of the new position</param>
+    /// <param name="checkSlippery">check if guide position is on slippery tile</param>
+    private void MoveGuideToPos(Vector3 direction, bool checkSlippery)
+    {
+        Vector3 nextTilePos = movementGuideTf.position + direction;
+        Collider2D nextTileStopsPlayer = Physics2D.OverlapCircle(nextTilePos, minimumRange, whatIsCollision);
 
-                    // Trigger slide sound effect
-                    if (!audio.isPlaying)
-                    {
-                        audio.clip = slideClip;
-                        audio.Play();
-                    }
+        // Move Guide to the first tile
+        if (!checkSlippery)
+        {
+            if (!nextTileStopsPlayer)
+            {
+                TriggerSlipClip();
+                movementGuideTf.position = nextTilePos;
+            }
 
-                    movePos.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
+            MoveGuideToPos(direction, true);
+        }
+        // Handle Guide movement if guide tile is slippery
+        else
+        {
+            nextTileIsCollision = Physics2D.OverlapCircle(movementGuideTf.position + direction, minimumRange, whatIsCollision);
+            isOnSlipperyGround = Physics2D.OverlapCircle(movementGuideTf.position, 0.005f, whatIsSlippery);
 
-                    nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision);
-                    isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0.005f, whatIsSlippery);
-
-                    // Player slips in slippery layer
-                    while (isOnSlipperyGround && !nextTileIsCollision)
-                    {
-
-
-                        movePos.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
-                        nextTileIsCollision = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsCollision);
-                        isOnSlipperyGround = Physics2D.OverlapCircle(movePos.position, 0.005f, whatIsSlippery);
-                    }
-
- 
-                }
+            // Player slips in slippery layer
+            while (isOnSlipperyGround && !nextTileIsCollision)
+            {
+                movementGuideTf.position += direction;
+                nextTileIsCollision = Physics2D.OverlapCircle(movementGuideTf.position + direction, minimumRange, whatIsCollision);
+                isOnSlipperyGround = Physics2D.OverlapCircle(movementGuideTf.position, 0.005f, whatIsSlippery);
             }
         }
     }
@@ -153,42 +142,73 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Mechanic to move rock if movable
     /// </summary>
-    /// <param name="axis"></param>
-    private void MoveRock(string axis)
+    /// <param name="axis">Player input movement axis</param>
+    private void MoveRock(Vector3 direction)
     {
-        if (axis == "Horizontal")
+        Vector3 nextTilePos = movementGuideTf.position + direction;
+        Collider2D nextTileContainsRock = Physics2D.OverlapCircle(nextTilePos, minimumRange, whatIsRock); ;
+        if (nextTileContainsRock != null)
         {
-            Collider2D collider = Physics2D.OverlapCircle(movePos.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), minimumRange, whatIsRock);
-            if (collider != null)
+            RockMovement rock = nextTileContainsRock.gameObject.GetComponent<RockMovement>();
+            if (!rock.isOnSlipperyTile)
             {
-                RockMovement rock = collider.gameObject.GetComponent<RockMovement>();
-
-                if (!rock.notMovable)
-                {
-                    rock.PushRock(axis);
-                }
-            }            
-        }
-        else if (axis == "Vertical")
-        {
-            Collider2D collider = Physics2D.OverlapCircle(movePos.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), minimumRange, whatIsRock);
-
-            if (collider != null)
-            {
-                RockMovement rock = collider.gameObject.GetComponent<RockMovement>();
-
-                if (!rock.notMovable)
-                {
-                    rock.PushRock(axis);
-                }
+                rock.MoveRockGuide(direction, false);
             }
         }
     }
+    #endregion
 
-    // Triggers method in game management to change scene
+    #region Utils
+    /// <summary>
+    /// Triggers method in game management to change scene
+    /// </summary>
     public void TriggerChangerScene()
     {
-       GameManagement gm =  GameObject.FindGameObjectWithTag("GameManagement").GetComponent<GameManagement>();
-        gm.changeScene = true;
+        GameManagement gm = GameObject.FindGameObjectWithTag("GameManagement").GetComponent<GameManagement>();
+        gm.levelFinished = true;
     }
+
+    /// <summary>
+    /// Triggers Player slip audio clip
+    /// </summary>
+    private void TriggerSlipClip()
+    {
+        // Trigger slide sound effect
+        if (!playerAudioSource.isPlaying)
+        {
+            playerAudioSource.clip = slideClip;
+            playerAudioSource.Play();
+        }
+    }
+
+    /// <summary>
+    /// Sets player animation according to its input
+    /// </summary>
+    /// <param name="axis">Player input axis</param>
+    private void SetPlayerAnimation(string axis)
+    {
+        if (axis == HORIZONTAL)
+        {
+            // Setting animation variables
+            animator.SetInteger("horizontal", (int)Input.GetAxisRaw(HORIZONTAL));
+            animator.SetInteger("vertical", 0);
+
+            // flip sprite if player turns left
+            if (Input.GetAxisRaw(HORIZONTAL) == -1)
+            {
+                transform.localRotation = Quaternion.Euler(0, 180, 0);
+            }
+            else
+            {
+                transform.localRotation = Quaternion.Euler(0, 0, 0);
+            }
+        }
+        else if (axis == VERTICAL)
+        {
+            // Setting animation variables
+            animator.SetInteger("vertical", (int)Input.GetAxisRaw(VERTICAL));
+            animator.SetInteger("horizontal", 0);
+        }
+    }
+    #endregion
 }

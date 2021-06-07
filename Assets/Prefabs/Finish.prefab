@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2548546086222509116}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.27, y: 2.51, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 545052177
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2907495730228469630, guid: b2d93e495c6d54843aa150cd6cb34e36, type: 3}
+  m_Sprite: {fileID: -4223967523339601223, guid: 330ffbbd160649e4aa91963940a2c29e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   winClip: {fileID: 8300000, guid: 33a306592fc0a374aa352330292ae252, type: 3}
-  fullStar: {fileID: 8139281176472587868, guid: b2d93e495c6d54843aa150cd6cb34e36, type: 3}
+  fullSprite: {fileID: -7224887886637807443, guid: 330ffbbd160649e4aa91963940a2c29e, type: 3}
 --- !u!82 &5713169990669538188
 AudioSource:
   m_ObjectHideFlags: 0

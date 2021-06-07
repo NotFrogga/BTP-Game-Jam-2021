@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,62 +6,69 @@ using UnityEngine.SceneManagement;
 public class GameManagement : MonoBehaviour
 {
 
-    public bool canRestart = true;
-    public bool changeScene = false;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public bool isNotUIScene = true;
+    public bool levelFinished = false;
 
     // Update is called once per frame
     void Update()
     {
         RestartLevel();
-        ChangeScene();
-        TriggerChangeScene();
+        ChangeSceneIfLevelFinished();
+        ChangeSceneUI();
     }
 
-    private void TriggerChangeScene()
+
+    #region Scene Management
+    /// <summary>
+    /// Trigger a scene change in UI scenes
+    /// First and Last Scenes
+    /// </summary>
+    private void ChangeSceneUI()
     {
-        if (Input.anyKey && !canRestart)
+        if (Input.anyKey && !isNotUIScene)
         {
-            if (SceneManager.GetActiveScene().buildIndex + 1 == SceneManager.sceneCountInBuildSettings)
-            {
-                SceneManager.LoadScene(0);
-            }
-            else
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-            }
+            ChangeScene();
         }
     }
 
+    /// <summary>
+    /// Restarts a game level scene
+    /// </summary>
     private void RestartLevel()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && canRestart)
+        if (Input.GetKeyDown(KeyCode.Space) && isNotUIScene)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
-    // Changes scene after a level is finished. If last scene is finished, go to first scene
-    public void ChangeScene()
+    /// <summary>
+    /// Changes scene after a level is finished. If last scene is finished, go to first scene
+    /// </summary>
+    public void ChangeSceneIfLevelFinished()
     {
-        if (changeScene)
+        if (levelFinished)
         {
-            if (SceneManager.GetActiveScene().buildIndex + 1 == SceneManager.sceneCountInBuildSettings)
-            {
-                SceneManager.LoadScene(0);
-            }
-            else
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-            }
-        } 
+            ChangeScene();
+        }
     }
 
+    private static void ChangeScene()
+    {
+        bool gameInLastScene = SceneManager.GetActiveScene().buildIndex + 1 == SceneManager.sceneCountInBuildSettings;
+        if (gameInLastScene)
+        {
+            SceneManager.LoadScene(0);
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+    }
+    #endregion
 
+
+    #region Game Management
     /// <summary>
     /// Checks if any rock is moving
     /// </summary>
@@ -84,4 +90,5 @@ public class GameManagement : MonoBehaviour
 
         return false;
     }
+    #endregion
 }
